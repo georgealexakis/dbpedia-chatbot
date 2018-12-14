@@ -108,7 +108,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 var AppComponent = /** @class */ (function () {
     function AppComponent(http) {
         this.http = http;
-        this.URL = 'http://dbpedia.org/sparql';
+        this.URL = 'https://dbpedia.org/sparql';
         this.sparkQlQuery = '';
         this.userInput = '';
     }
