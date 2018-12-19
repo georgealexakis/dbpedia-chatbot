@@ -78,7 +78,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\" style=\"padding-top:2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparkQlQuery\" placeholder=\"sparkQl Query\" #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>User Input (Max 3 words):</b></h5>\n            <p>{{userInput.value}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Generated Query (Sparkql):</b></h5>\n            <p>{{sparkQlQuery}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Final Result (JSON):</b></h5>\n            <p>{{sparkQlData | json}}</p>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
+module.exports = "<div class=\"container\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\" style=\"padding-top:2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparkQlQuery\" placeholder=\"sparkQl Query\" #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>User Input:</b></h5>\n            <p>{{input}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Generated Query (Sparkql):</b></h5>\n            <p>{{sparkQlQuery}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Final Result (JSON):</b></h5>\n            <p>{{sparkQlData | json}}</p>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -107,34 +107,71 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 var AppComponent = /** @class */ (function () {
     function AppComponent(http) {
+        var _this = this;
         this.http = http;
         this.URL = 'https://dbpedia.org/sparql';
+        this.propertiesJSON = './assets/properties.json';
         this.sparkQlQuery = '';
+        this.sparkQlQueryPerson = '';
+        this.sparkQlQueryThing = '';
         this.userInput = '';
+        this.input = '';
+        this.prefixes = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n' +
+            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n' +
+            'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
+            'PREFIX dbo: <http://dbpedia.org/ontology/>\n' +
+            'PREFIX dbp: <http://dbpedia.org/property/>\n' +
+            'PREFIX dbr: <http://dbpedia.org/resource/>\n' +
+            'PREFIX dct: <http://purl.org/dc/terms/>\n';
+        this.getJSON().subscribe(function (data) {
+            _this.propertyMatching = data;
+            console.log(_this.propertyMatching);
+        });
+        console.log(this.propertyMatching);
     }
+    AppComponent.prototype.getJSON = function () {
+        return this.http.get(this.propertiesJSON);
+    };
     AppComponent.prototype.userInputListener = function (userInput) {
         var temp = userInput.value;
         this.argument = temp.split(' ');
-        var argument1 = ' ';
-        var argument2 = ' ';
-        var argument3 = ' ';
-        if (this.argument[1]) {
-            argument2 = this.argument[1].toUpperCase();
+        var argument1;
+        var argument2;
+        var argument3;
+        if (this.argument.length > 3) {
+            for (var i = 0; i < this.argument.length - 2; i++) {
+                if (i === 0) {
+                    argument1 = this.argument[i];
+                }
+                else if (i > 0 && argument1) {
+                    argument1 = argument1 + ' ' + this.argument[i];
+                }
+            }
+            argument2 = this.argument[this.argument.length - 2];
+            argument3 = this.argument[this.argument.length - 1];
+            this.input = argument1 + ' ' + argument2 + ' ' + argument3;
+            this.sparkQlGenerator(argument1, argument2, argument3);
         }
-        if (this.argument[2]) {
-            argument3 = this.argument[2].toUpperCase();
+        else if (this.argument[0] && this.argument[1] && this.argument[2]) {
+            argument1 = this.argument[0];
+            argument2 = this.argument[1];
+            argument3 = this.argument[2];
+            this.input = argument1 + ' ' + argument2 + ' ' + argument3;
+            this.sparkQlGenerator(argument1, argument2, argument3);
         }
-        if (this.argument[0]) {
-            argument1 = this.argument[0].toUpperCase();
-            // tslint:disable-next-line:max-line-length
-            this.sparkQlQuery = 'select ?s1 as ?c1, (bif:search_excerpt (bif:vector ("' + argument1 + '", "' + argument2 + '", "' + argument3 + '"), ?o1)) as ?c2, ?sc, ?rank, ?g where ' +
-                '{{{ select ?s1, (?sc * 3e-1) as ?sc, ?o1, (sql:rnk_scale (<LONG::IRI_RANK> (?s1))) as ?rank, ?g where { ' +
-                // tslint:disable-next-line:max-line-length
-                'quad map virtrdf:DefaultQuadMap{graph ?g { ?s1 ?s1textp ?o1 . ?o1 bif:contains  "(' + argument1 + ' AND ' + argument2 + ' AND ' + argument3 + ')" option (score ?sc) . }}}' +
-                'limit 1 offset 0 }}}';
+        else {
+            this.sparkQlQuery = 'Please insert a valid question.';
         }
-        console.log('Arguments: \na:' + argument1 + ' b:' + argument2 + ' c:' + argument3);
-        this.sparkQlRequest(this.sparkQlQuery);
+    };
+    AppComponent.prototype.sparkQlGenerator = function (argument1, argument2, argument3) {
+        var sparkQl = this.prefixes + 'SELECT ' + argument3 + ' WHERE ' +
+            '{ '
+            + '?result dbo:' + argument2 + ' ' + argument3 + ' . '
+            + '?result rdfs:label "' + argument1 + '"@en . '
+            + 'FILTER(lang(' + argument3 + ')="en" || datatype(' + argument3 + ') = xsd:string)'
+            + '} LIMIT 1 ';
+        this.sparkQlQuery = sparkQl;
+        this.sparkQlRequest(sparkQl);
     };
     AppComponent.prototype.sparkQlRequest = function (sparkQlQuery) {
         var _this = this;
