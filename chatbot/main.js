@@ -78,7 +78,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\" style=\"padding-top:2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparkQlQuery\" placeholder=\"sparkQl Query\" #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>User Input:</b></h5>\n            <p>{{input}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Generated Query (Sparkql):</b></h5>\n            <p>{{sparkQlQuery}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Final Result (JSON):</b></h5>\n            <p>{{sparkQlData | json}}</p>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
+module.exports = "<div class=\"container\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\" style=\"padding-top:2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparQlQuery\" placeholder=\"User Input\" #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>User Input:</b></h5>\n            <p>{{input}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Generated Query (SparQl):</b></h5>\n            <p>{{sparQlQuery}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Final Result (JSON):</b></h5>\n            <p>{{sparQlData | json}}</p>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -111,9 +111,7 @@ var AppComponent = /** @class */ (function () {
         this.http = http;
         this.URL = 'https://dbpedia.org/sparql';
         this.propertiesJSON = './assets/properties.json';
-        this.sparkQlQuery = '';
-        this.sparkQlQueryPerson = '';
-        this.sparkQlQueryThing = '';
+        this.sparQlQuery = '';
         this.userInput = '';
         this.input = '';
         this.prefixes = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n' +
@@ -150,30 +148,33 @@ var AppComponent = /** @class */ (function () {
             argument2 = this.argument[this.argument.length - 2];
             argument3 = this.argument[this.argument.length - 1];
             this.input = argument1 + ' ' + argument2 + ' ' + argument3;
-            this.sparkQlGenerator(argument1, argument2, argument3);
+            this.sparQlGenerator(argument1, argument2, argument3);
         }
         else if (this.argument[0] && this.argument[1] && this.argument[2]) {
             argument1 = this.argument[0];
             argument2 = this.argument[1];
             argument3 = this.argument[2];
             this.input = argument1 + ' ' + argument2 + ' ' + argument3;
-            this.sparkQlGenerator(argument1, argument2, argument3);
+            this.sparQlGenerator(argument1, argument2, argument3);
         }
         else {
-            this.sparkQlQuery = 'Please insert a valid question.';
+            this.sparQlQuery = 'Please insert a valid question.';
         }
     };
-    AppComponent.prototype.sparkQlGenerator = function (argument1, argument2, argument3) {
-        var sparkQl = this.prefixes + 'SELECT ' + argument3 + ' WHERE ' +
+    AppComponent.prototype.sparQlGenerator = function (argument1, argument2, argument3) {
+        var sparkQl = this.prefixes + 'SELECT distinct ' + argument3 + ' WHERE ' +
             '{ '
             + '?result dbo:' + argument2 + ' ' + argument3 + ' . '
             + '?result rdfs:label "' + argument1 + '"@en . '
-            + 'FILTER(lang(' + argument3 + ')="en" || datatype(' + argument3 + ') = xsd:string)'
+            /*       + 'FILTER(lang(?x)="en" || '
+                  + 'datatype(?x) = xsd:string || '
+                  + 'datatype(?x) = xsd:integer || '
+                  + 'datatype(?x) = xsd:anyURI) ' */
             + '} LIMIT 1 ';
-        this.sparkQlQuery = sparkQl;
-        this.sparkQlRequest(sparkQl);
+        this.sparQlQuery = sparkQl;
+        this.sparQlRequest(sparkQl);
     };
-    AppComponent.prototype.sparkQlRequest = function (sparkQlQuery) {
+    AppComponent.prototype.sparQlRequest = function (sparkQlQuery) {
         var _this = this;
         var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
             .set('Content-Type', 'application/json');
@@ -192,10 +193,10 @@ var AppComponent = /** @class */ (function () {
         this.http.get(this.URL, httpOptions)
             .subscribe(function (data) {
             console.log('GET Request is successful: ', data);
-            _this.sparkQlData = data;
+            _this.sparQlData = data;
         }, function (error) {
             console.log('Error:', error);
-            _this.sparkQlData = error;
+            _this.sparQlData = error;
         });
     };
     AppComponent = __decorate([
