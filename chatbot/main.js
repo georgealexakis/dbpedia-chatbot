@@ -78,7 +78,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\" style=\"padding-top:2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparQlQuery\" placeholder=\"User Input\" #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>User Input:</b></h5>\n            <p>{{input}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Generated Query (SparQl):</b></h5>\n            <p>{{sparQlQuery}}</p>\n        </div>\n        <div class=\"col-lg-12\">\n            <h5><b>Final Result (JSON):</b></h5>\n            <p>{{sparQlData | json}}</p>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
+module.exports = "<div class=\"container\" style=\"padding-bottom: 2em; padding-top: 2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\">\n    <div class=\"row\" style=\"padding-bottom: 2em;\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparQlQuery\" placeholder=\"Heraklion areaCode ?x\"\n                        #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-lg-6\">\n            <div class=\"row\">\n                <div class=\"col-lg-12\">\n                    <h5><b>User Input:</b></h5>\n                    <p>{{input}}</p>\n                </div>\n                <div class=\"col-lg-12\">\n                    <h5><b>Generated Query (SparQl):</b></h5>\n                    <p>{{sparQlQuery}}</p>\n                </div>\n                <div class=\"col-lg-12\">\n                    <h5><b>Final Results (JSON):</b></h5>\n                    <p *ngIf=\"sparQlData!== null\">{{sparQlData | json}}</p>\n                </div>\n            </div>\n        </div>\n        <div class=\"col-lg-6\">\n            <h5><b>Input Examples:</b></h5>\n            <table class=\"table table-striped table-dark\">\n                <thead>\n                    <tr>\n                        <th scope=\"col\">#</th>\n                        <th scope=\"col\">Input</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <th scope=\"row\">1</th>\n                        <td>Heraklion areaCode ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">2</th>\n                        <td>Albert Einstein award ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">3</th>\n                        <td>Albert Einstein birthDate ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">4</th>\n                        <td>Heraklion wikiPageID ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">5</th>\n                        <td>Planet thumbnail ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">6</th>\n                        <td>Planet wikiPageRevisionID ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">7</th>\n                        <td>GEORGE (operating system) developer ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">8</th>\n                        <td>GEORGE (operating system) status ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">9</th>\n                        <td>United States language ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">10</th>\n                        <td>United States governmentType ?x</td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -123,9 +123,8 @@ var AppComponent = /** @class */ (function () {
             'PREFIX dct: <http://purl.org/dc/terms/>\n';
         this.getJSON().subscribe(function (data) {
             _this.propertyMatching = data;
-            console.log(_this.propertyMatching);
+            // console.log(this.propertyMatching);
         });
-        console.log(this.propertyMatching);
     }
     AppComponent.prototype.getJSON = function () {
         return this.http.get(this.propertiesJSON);
@@ -147,40 +146,61 @@ var AppComponent = /** @class */ (function () {
             }
             argument2 = this.argument[this.argument.length - 2];
             argument3 = this.argument[this.argument.length - 1];
-            this.input = argument1 + ' ' + argument2 + ' ' + argument3;
-            this.sparQlGenerator(argument1, argument2, argument3);
+            if (argument3[0] !== '?') {
+                this.input = 'Last arguments should contain (?).';
+                this.sparQlQuery = 'Last arguments should contain (?).';
+                this.sparQlData = null;
+            }
+            else {
+                this.input = argument1 + ' ' + argument2 + ' ' + argument3;
+                this.sparQlGenerator(argument1, argument2, argument3);
+            }
+        }
+        else if (this.argument.length < 3) {
+            this.input = 'Please insert a valid question such as, Heraklion areaCode ?x.';
+            this.sparQlQuery = 'Please insert a valid question such as, Heraklion areaCode ?x.';
+            this.sparQlData = null;
         }
         else if (this.argument[0] && this.argument[1] && this.argument[2]) {
             argument1 = this.argument[0];
             argument2 = this.argument[1];
             argument3 = this.argument[2];
-            this.input = argument1 + ' ' + argument2 + ' ' + argument3;
-            this.sparQlGenerator(argument1, argument2, argument3);
+            if (argument3[0] !== '?') {
+                this.input = 'Last arguments should contain (?).';
+                this.sparQlQuery = 'Last arguments should contain (?).';
+                this.sparQlData = null;
+            }
+            else {
+                this.input = argument1 + ' ' + argument2 + ' ' + argument3;
+                this.sparQlGenerator(argument1, argument2, argument3);
+            }
         }
         else {
-            this.sparQlQuery = 'Please insert a valid question.';
+            this.input = 'Please insert a valid question such as, Heraklion areaCode ?x.';
+            this.sparQlQuery = 'Please insert a valid question such as, Heraklion areaCode ?x.';
+            this.sparQlData = null;
         }
     };
     AppComponent.prototype.sparQlGenerator = function (argument1, argument2, argument3) {
-        var sparkQl = this.prefixes + 'SELECT distinct ' + argument3 + ' WHERE ' +
+        var sparQl = this.prefixes + 'SELECT distinct ' + argument3 + ' WHERE ' +
             '{ '
-            + '?result dbo:' + argument2 + ' ' + argument3 + ' . '
             + '?result rdfs:label "' + argument1 + '"@en . '
-            /*       + 'FILTER(lang(?x)="en" || '
+            + '?result dbo:' + argument2 + ' ' + argument3 + ' . '
+            /*    + 'FILTER(lang(?x)="en" || '
                   + 'datatype(?x) = xsd:string || '
                   + 'datatype(?x) = xsd:integer || '
                   + 'datatype(?x) = xsd:anyURI) ' */
-            + '} LIMIT 1 ';
-        this.sparQlQuery = sparkQl;
-        this.sparQlRequest(sparkQl);
+            + '}';
+        this.sparQlQuery = sparQl;
+        this.sparQlRequest(sparQl);
     };
-    AppComponent.prototype.sparQlRequest = function (sparkQlQuery) {
+    AppComponent.prototype.sparQlRequest = function (sparQlQuery) {
         var _this = this;
         var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
             .set('Content-Type', 'application/json');
         var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]()
             .set('default-graph-uri', 'http://dbpedia.org')
-            .set('query', sparkQlQuery)
+            .set('query', sparQlQuery)
             .set('format', 'application/json')
             .set('CXML_redir_for_subjs', '121')
             .set('CXML_redir_for_hrefs=', '')
