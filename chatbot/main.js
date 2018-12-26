@@ -78,7 +78,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\" style=\"padding-bottom: 2em; padding-top: 2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\">\n    <div class=\"row\" style=\"padding-bottom: 2em;\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparQlQuery\" placeholder=\"Heraklion areaCode ?x\"\n                        #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-lg-6\">\n            <div class=\"row\">\n                <div class=\"col-lg-12\">\n                    <h5><b>User Input:</b></h5>\n                    <p>{{input}}</p>\n                </div>\n                <div class=\"col-lg-12\">\n                    <h5><b>Generated Query (SparQl):</b></h5>\n                    <p>{{sparQlQuery}}</p>\n                </div>\n                <div class=\"col-lg-12\">\n                    <h5><b>Final Results (JSON):</b></h5>\n                    <p *ngIf=\"sparQlData!== null\">{{sparQlData | json}}</p>\n                </div>\n            </div>\n        </div>\n        <div class=\"col-lg-6\">\n            <h5><b>Input Examples:</b></h5>\n            <table class=\"table table-striped table-dark\">\n                <thead>\n                    <tr>\n                        <th scope=\"col\">#</th>\n                        <th scope=\"col\">Input</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <th scope=\"row\">1</th>\n                        <td>Heraklion areaCode ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">2</th>\n                        <td>Albert Einstein award ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">3</th>\n                        <td>Albert Einstein birthDate ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">4</th>\n                        <td>Heraklion wikiPageID ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">5</th>\n                        <td>Planet thumbnail ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">6</th>\n                        <td>Planet wikiPageRevisionID ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">7</th>\n                        <td>GEORGE (operating system) developer ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">8</th>\n                        <td>GEORGE (operating system) status ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">9</th>\n                        <td>United States language ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">10</th>\n                        <td>United States governmentType ?x</td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
+module.exports = "<div class=\"container\" style=\"padding-bottom: 2em; padding-top: 2em;\">\n    <div class=\"row\">\n        <div class=\"col-lg-12\">\n            <h2>Chat Bot</h2>\n        </div>\n        <div class=\"col-lg-12\">\n            <h3><a [href]=\"URL\">{{URL}}</a></h3>\n        </div>\n    </div>\n</div>\n<div class=\"container\">\n    <div class=\"row\" style=\"padding-bottom: 2em;\">\n        <div class=\"col-lg-12\">\n            <form class=\"form-inline\">\n                <div class=\"form-group mx-sm-3 mb-2\">\n                    <label for=\"sparkQlQuery\" class=\"sr-only\">Password</label>\n                    <input type=\"text\" class=\"form-control\" id=\"sparQlQuery\" placeholder=\"Heraklion areaCode ?x\"\n                        #userInput>\n                </div>\n                <button type=\"button\" class=\"btn btn-primary mb-2\" (click)=\"userInputListener(userInput)\">Retrive\n                    Results</button>\n            </form>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-lg-6\">\n            <div class=\"row\">\n                <div class=\"col-lg-12\">\n                    <h5><b>User Input:</b></h5>\n                    <p>{{input}}</p>\n                </div>\n                <div class=\"col-lg-12\">\n                    <h5><b>Generated Query (SparQl):</b></h5>\n                    <p>{{sparQlQuery}}</p>\n                </div>\n                <div class=\"col-lg-12\">\n                    <h5><b>Final Results (JSON):</b></h5>\n                    <div *ngIf=\"sparQlData === null; else elseBlock\">\n                        <p>No data</p>\n                    </div>\n                    <ng-template #elseBlock>\n                        <div *ngFor=\"let result of finalResults\">\n                            <div class=\"card bg-default mb-3\" style=\"max-width: 18rem;\">\n                                <img *ngIf=\"imageSection !== null\" class=\"card-img-top\" [src]=\"imageSection\" [alt]=\"finalQuestionResults\">\n                                <div class=\"card-body\">\n                                    <h5 class=\"card-title\">{{finalQuestionResults}}</h5>\n                                    <p class=\"card-text\">{{result}}</p>\n                                    <a *ngIf=\"wikiSection !== null\" [href]=\"wikiSection\" class=\"btn btn-primary\">Wikipedia\n                                        Link</a>\n                                </div>\n                            </div>\n                        </div>\n                    </ng-template>\n                </div>\n            </div>\n        </div>\n        <div class=\"col-lg-6\">\n            <h5><b>Input Examples:</b></h5>\n            <table class=\"table table-striped table-dark\">\n                <thead>\n                    <tr>\n                        <th scope=\"col\">#</th>\n                        <th scope=\"col\">Input</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr>\n                        <th scope=\"row\">1</th>\n                        <td>Heraklion areaCode ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">2</th>\n                        <td>Albert Einstein award ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">3</th>\n                        <td>Albert Einstein birthDate ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">4</th>\n                        <td>Heraklion wikiPageID ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">5</th>\n                        <td>Planet thumbnail ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">6</th>\n                        <td>Planet wikiPageRevisionID ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">7</th>\n                        <td>GEORGE (operating system) developer ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">8</th>\n                        <td>GEORGE (operating system) status ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">9</th>\n                        <td>United States language ?x</td>\n                    </tr>\n                    <tr>\n                        <th scope=\"row\">10</th>\n                        <td>United States governmentType ?x</td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</div>\n<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -111,16 +111,20 @@ var AppComponent = /** @class */ (function () {
         this.http = http;
         this.URL = 'https://dbpedia.org/sparql';
         this.propertiesJSON = './assets/properties.json';
+        this.sparQlData = null;
         this.sparQlQuery = '';
         this.userInput = '';
         this.input = '';
-        this.prefixes = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n' +
-            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n' +
-            'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
-            'PREFIX dbo: <http://dbpedia.org/ontology/>\n' +
-            'PREFIX dbp: <http://dbpedia.org/property/>\n' +
-            'PREFIX dbr: <http://dbpedia.org/resource/>\n' +
-            'PREFIX dct: <http://purl.org/dc/terms/>\n';
+        this.finalQuestionResults = '';
+        this.imageSection = null;
+        this.wikiSection = null;
+        this.prefixes = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ' +
+            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ' +
+            'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ' +
+            'PREFIX dbo: <http://dbpedia.org/ontology/> ' +
+            'PREFIX dbp: <http://dbpedia.org/property/> ' +
+            'PREFIX dbr: <http://dbpedia.org/resource/> ' +
+            'PREFIX dct: <http://purl.org/dc/terms/> ';
         this.getJSON().subscribe(function (data) {
             _this.propertyMatching = data;
             // console.log(this.propertyMatching);
@@ -153,7 +157,9 @@ var AppComponent = /** @class */ (function () {
             }
             else {
                 this.input = argument1 + ' ' + argument2 + ' ' + argument3;
-                this.sparQlGenerator(argument1, argument2, argument3);
+                this.finalQuestionResults = argument2[0].toUpperCase() + argument2.slice(1) + ' of ' + argument1 + ' is ';
+                this.searchArgument = argument2;
+                this.sparQlGenerator(argument1, argument2, '?x');
             }
         }
         else if (this.argument.length < 3) {
@@ -172,7 +178,9 @@ var AppComponent = /** @class */ (function () {
             }
             else {
                 this.input = argument1 + ' ' + argument2 + ' ' + argument3;
-                this.sparQlGenerator(argument1, argument2, argument3);
+                this.finalQuestionResults = argument2[0].toUpperCase() + argument2.slice(1) + ' of ' + argument1 + ' is ';
+                this.searchArgument = argument2;
+                this.sparQlGenerator(argument1, argument2, '?x');
             }
         }
         else {
@@ -214,10 +222,40 @@ var AppComponent = /** @class */ (function () {
             .subscribe(function (data) {
             console.log('GET Request is successful: ', data);
             _this.sparQlData = data;
+            _this.dataVisualization(_this.sparQlData);
         }, function (error) {
             console.log('Error:', error);
             _this.sparQlData = error;
         });
+    };
+    AppComponent.prototype.dataVisualization = function (receivedData) {
+        this.finalResults = new Array();
+        this.imageSection = null;
+        this.wikiSection = null;
+        var result = receivedData.results.bindings;
+        if (result.length > 1) {
+            for (var i = 0; i < result.length; i++) {
+                if (result[i].x['xml:lang']) {
+                    if (result[i].x['xml:lang'] === 'en') {
+                        this.finalResults.push(result[i].x.value);
+                    }
+                }
+                else if (this.searchArgument === 'wikiPageID') {
+                    this.finalResults.push(result[0].x.value);
+                    this.wikiSection = 'http://en.wikipedia.org/?curid=' + result[0].x.value;
+                }
+                else {
+                    this.finalResults.push(result[i].x.value);
+                }
+            }
+        }
+        else if (result[0].x.value.includes('.jpg')) {
+            this.finalResults.push(result[0].x.value);
+            this.imageSection = result[0].x.value;
+        }
+        else {
+            this.finalResults.push(result[0].x.value);
+        }
     };
     AppComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
